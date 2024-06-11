@@ -138,3 +138,71 @@ void inputString(string &input, const char* prompt) {
     getstr(str);
     input = str;
 }
+int main() {
+    int pilihan;
+    string namaPengguna, kataSandi, judul, jadwal;
+    int nomorKursi;
+
+    initscr(); 
+    cbreak(); 
+
+    printw("Selamat datang di Pemesanan Bioskop!\n");
+    refresh();
+
+    tambahFilm("Film1", "10:00 WIB");
+    tambahFilm("Film2", "12:00 WIB");
+
+    while (true) {
+        printw("1. Daftar\n2. Masuk\n3. Tampilkan Film\n4. Pesan Tiket\n5. Perbarui Jadwal Film\n6. Keluar\nPilih opsi: ");
+        refresh();
+        scanw("%d", &pilihan);
+
+        clear();
+        switch (pilihan) {
+            case 1:
+                inputString(namaPengguna, "Masukkan nama pengguna: ");
+                inputString(kataSandi, "Masukkan kata sandi: ");
+                daftarPengguna(namaPengguna, kataSandi);
+                break;
+            case 2:
+                inputString(namaPengguna, "Masukkan nama pengguna: ");
+                inputString(kataSandi, "Masukkan kata sandi: ");
+                if (masukPengguna(namaPengguna, kataSandi)) {
+                    printw("Masuk sebagai: %s\n", namaPengguna.c_str());
+                }
+                break;
+            case 3:
+                tampilkanFilm();
+                break;
+            case 4:
+                if (namaPengguna.empty()) {
+                    printw("Anda harus masuk terlebih dahulu untuk memesan tiket.\n");
+                    break;
+                }
+                inputString(judul, "Masukkan judul film: ");
+                inputString(jadwal, "Masukkan jadwal: ");
+                if (!filmTersedia(judul, jadwal)) {
+                    printw("Film atau jadwal tidak tersedia. Coba lagi.\n");
+                    break;
+                }
+                printw("Masukkan nomor kursi: ");
+                refresh();
+                scanw("%d", &nomorKursi);
+                if (pesanTiket(namaPengguna, judul, jadwal, nomorKursi)) {
+                    printw("Tiket dipesan untuk %s pada %s, Nomor kursi: %d\n", judul.c_str(), jadwal.c_str(), nomorKursi);
+                }
+                break;
+            case 5:
+                inputString(judul, "Masukkan judul film yang ingin diperbarui: ");
+                inputString(jadwal, "Masukkan jadwal baru: ");
+                perbaruiJadwalFilm(judul, jadwal);
+                break;
+            case 6:
+                printw("Keluar...\n");
+                endwin();
+                return 0;
+            default:
+                printw("Pilihan tidak valid! Silakan coba lagi.\n");
+        }
+    }
+}
